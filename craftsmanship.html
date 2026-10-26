@@ -5,27 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Sealed Gate · The Way of the Reach</title>
 <style>
-  body{background:#0e0c09;color:#e8ddc9;font-family:Georgia,serif;margin:0;padding:2rem 1rem;}
+  :root{--black:#000000;--red:#8f0000;--redbright:#b3001b;--white:#f7f2e7;--orange:#ff6700;--orangeglow:#ff8c42}
+  *{box-sizing:border-box}
+  body{background:var(--black);color:var(--white);font-family:Georgia,serif;margin:0;padding:2rem 1rem;}
   main{max-width:44rem;margin:0 auto;}
-  h1{font-weight:normal;letter-spacing:.02em;}
-  .gate{border:1px solid #6b5a34;padding:1.5rem;background:#171310;}
-  input[type=password]{width:100%;box-sizing:border-box;padding:.7rem;background:#0e0c09;border:1px solid #6b5a34;color:#e8ddc9;font-size:1rem;}
-  button{margin-top:1rem;padding:.7rem 1.4rem;background:#6b5a34;color:#fff;border:0;cursor:pointer;font-size:1rem;}
-  #msg{color:#c9a44a;min-height:1.2em;}
-  #opened{color:#c9a44a;display:none;margin-bottom:1rem;}
-  #content{display:none;}
-  a{color:#c9a44a;}
+  h1{font-weight:normal;letter-spacing:.06em;text-align:center;color:var(--white);}
+  a{color:var(--orangeglow);}
   .small{color:#9a8d73;font-size:.9rem;}
-  .sigils{font-size:1.3rem;letter-spacing:.4em;text-align:center;color:#6b5a34;margin:.5rem 0 1rem;}
+  /* THE GATE — jet black doors, blood red frame, robe white seam, fiery orange fire */
+  .gatewrap{margin:1.5rem auto;max-width:26rem;}
+  .gateframe{border:4px solid var(--red);outline:2px solid var(--redbright);background:#050505;padding:10px;box-shadow:0 0 42px rgba(255,103,0,.28), inset 0 0 30px rgba(0,0,0,.9);}
+  .doors{display:flex;height:230px;border:1px solid #2a2a2a;}
+  .door{flex:1;background:linear-gradient(180deg,#0a0a0a 0%,#000 60%,#120402 100%);position:relative;}
+  .door.left{border-right:2px solid var(--white);box-shadow:6px 0 18px rgba(247,242,231,.15);}
+  .door.right{border-left:2px solid var(--white);box-shadow:-6px 0 18px rgba(247,242,231,.15);}
+  .door::after{content:"";position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%, var(--orangeglow), var(--orange) 55%, #7a2d00);box-shadow:0 0 14px var(--orange);}
+  .door.left::after{right:12px;}
+  .door.right::after{left:12px;}
+  .flames{height:26px;background:linear-gradient(180deg, rgba(255,103,0,0) 0%, rgba(255,103,0,.35) 55%, rgba(179,0,27,.55) 100%);}
+  .gate{border:1px solid var(--red);padding:1.5rem;background:#0a0505;margin-top:1rem;}
+  input[type=password]{width:100%;padding:.7rem;background:#000;border:1px solid var(--redbright);color:var(--white);font-size:1rem;}
+  input[type=password]:focus{outline:1px solid var(--orange);}
+  button{margin-top:1rem;padding:.7rem 1.4rem;background:var(--orange);color:#000;font-weight:bold;border:0;cursor:pointer;font-size:1rem;box-shadow:0 0 16px rgba(255,103,0,.45);}
+  button:hover{background:var(--orangeglow);}
+  #msg{color:var(--redbright);min-height:1.2em;font-weight:bold;}
+  #opened{color:var(--orange);display:none;margin-bottom:1rem;font-size:1.05rem;}
+  #content{display:none;}
+  #content h1{color:var(--white);text-align:left;}
+  #content h2{color:var(--orangeglow);}
 </style>
 </head>
 <body>
 <main>
   <p class="small"><a href="index.html">← The Way of the Reach</a></p>
-  <h1>The Sealed Gate</h1>
+  <h1>THE SEALED GATE</h1>
+  <div class="gatewrap">
+    <div class="gateframe">
+      <div class="doors"><div class="door left"></div><div class="door right"></div></div>
+      <div class="flames"></div>
+    </div>
+  </div>
   <div class="gate" id="gate">
     <p>Beyond this gate stands the Yeshua craftsmanship — the foundation of a work being built under God. It is not hidden out of shame; it is sealed because it is <em>discovered</em>, by those who are given to enter.</p>
-    <p>Twelve keys open this gate — one for each of the twelve tribes, each bearing its tribe's symbol. If a key has been given to you, enter it whole, exactly as it was given. It opens here, in your browser only, for this visit. Nothing you type is sent anywhere, or kept.</p>
+    <p>Twelve keys open this gate — one for each of the twelve tribes, each bearing its tribe's symbol. Whichever tribe's key you hold, the gate is the same. Enter your key whole, exactly as it was given. It opens here, in your browser only, for this visit. Nothing you type is sent anywhere, or kept.</p>
     <input type="password" id="key" autocomplete="off" placeholder="Your key, whole and exact">
     <button id="open">Open the gate</button>
     <p id="msg"></p>
