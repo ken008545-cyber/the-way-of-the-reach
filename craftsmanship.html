@@ -64,7 +64,7 @@ async function unlock(){
   if(!pw){msg.textContent='Enter your key.';return;}
   msg.textContent='Trying the lock…';
   try{
-    const res=await fetch('craftsmanship-bundle.json');
+    const res=await fetch('craftsmanship-bundle.json?v=13-' + Date.now(), {cache:'no-store'});
     const b=await res.json();
     const enc=new TextEncoder();
     for(const w of b.wraps){
