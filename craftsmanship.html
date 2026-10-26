@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sealed Gate · The Way of the Reach</title>
+<style>
+  body{background:#0e0c09;color:#e8ddc9;font-family:Georgia,serif;margin:0;padding:2rem 1rem;}
+  main{max-width:44rem;margin:0 auto;}
+  h1{font-weight:normal;letter-spacing:.02em;}
+  .gate{border:1px solid #6b5a34;padding:1.5rem;background:#171310;}
+  input[type=password]{width:100%;box-sizing:border-box;padding:.7rem;background:#0e0c09;border:1px solid #6b5a34;color:#e8ddc9;font-size:1rem;}
+  button{margin-top:1rem;padding:.7rem 1.4rem;background:#6b5a34;color:#fff;border:0;cursor:pointer;font-size:1rem;}
+  #msg{color:#c9a44a;min-height:1.2em;}
+  #opened{color:#c9a44a;display:none;margin-bottom:1rem;}
+  #content{display:none;}
+  a{color:#c9a44a;}
+  .small{color:#9a8d73;font-size:.9rem;}
+  .sigils{font-size:1.3rem;letter-spacing:.4em;text-align:center;color:#6b5a34;margin:.5rem 0 1rem;}
+</style>
+</head>
+<body>
+<main>
+  <p class="small"><a href="index.html">← The Way of the Reach</a></p>
+  <h1>The Sealed Gate</h1>
+  <div class="gate" id="gate">
+    <p>Beyond this gate stands the Yeshua craftsmanship — the foundation of a work being built under God. It is not hidden out of shame; it is sealed because it is <em>discovered</em>, by those who are given to enter.</p>
+    <p>Twelve keys open this gate — one for each of the twelve tribes, each bearing its tribe's symbol. If a key has been given to you, enter it whole, exactly as it was given. It opens here, in your browser only, for this visit. Nothing you type is sent anywhere, or kept.</p>
+    <input type="password" id="key" autocomplete="off" placeholder="Your key, whole and exact">
+    <button id="open">Open the gate</button>
+    <p id="msg"></p>
+    <p class="small">"But thou, O Daniel, shut up the words, and seal the book, even to the time of the end." — Daniel 12:4</p>
+  </div>
+  <p id="opened"></p>
+  <div id="content"></div>
+</main>
+<script>
+function b64(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
+async function unlock(){
+  const msg=document.getElementById('msg');
+  const pw=document.getElementById('key').value.trim();
+  if(!pw){msg.textContent='Enter your key.';return;}
+  msg.textContent='Trying the lock…';
+  try{
+    const res=await fetch('craftsmanship-bundle.json');
+    const b=await res.json();
+    const enc=new TextEncoder();
+    for(const w of b.wraps){
+      try{
+        const base=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);
+        const wk=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(w.salt),iterations:b.iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+        const ckRaw=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(w.iv)},wk,b64(w.wrapped));
+        const ck=await crypto.subtle.importKey('raw',ckRaw,'AES-GCM',false,['decrypt']);
+        const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(b.content_iv)},ck,b64(b.data));
+        const html=new TextDecoder().decode(plain);
+        if(!html.startsWith('<!--SEALED:FOUNDATION-->')){continue;}
+        document.getElementById('content').innerHTML=html;
+        document.getElementById('gate').style.display='none';
+        const op=document.getElementById('opened');
+        op.textContent='The gate is opened by the key of '+w.tribe+' — '+w.epithet+'.';
+        op.style.display='block';
+        document.getElementById('content').style.display='block';
+        document.getElementById('key').value='';
+        return;
+      }catch(e){ /* this key did not fit this wrap; try the next */ }
+    }
+    msg.textContent='That key does not open this gate.';
+  }catch(e){
+    msg.textContent='The seal could not be reached. Try again in a moment.';
+  }
+}
+document.getElementById('open').addEventListener('click',unlock);
+document.getElementById('key').addEventListener('keydown',e=>{if(e.key==='Enter')unlock();});
+</script>
+</body>
+</html>
